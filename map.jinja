@@ -1,0 +1,61 @@
+{% set logstash = salt['grains.filter_by']({
+  'Debian': {
+    'pkg': 'logstash',
+    'svc': 'logstash',
+    'pkgstate': 'latest',
+    'indent': 4
+  },
+  'RedHat': {
+    'pkg': 'logstash',
+    'svc': 'logstash',
+    'pkgstate': 'latest',
+    'indent': 4
+  }
+}, merge=salt['pillar.get']('logstash')) %}
+
+{%- macro output_indented(col, string) %}
+{{ string|indent(col, true) -}}
+{%- endmacro %}
+
+{% macro format_logstash_config(plugin_type, plugin_array) %}
+{%- set col = 0 %}
+{{- output_indented(col, plugin_type + ' {') }}
+{%- set col = col + logstash.indent %}
+{%- for plugin in plugin_array %}
+  {%- if plugin.cond is defined %}
+    {{- output_indented(col, (plugin.cond + " {")) }}
+    {%- set col = col + logstash.indent %}
+  {%- endif %}
+  {{- output_indented(col, (plugin.plugin_name + " {")) }}
+  {%- set col = col + logstash.indent %}
+  {%- for key, value in plugin.iteritems() %}
+    {%- if key == 'plugin_name' or key == 'cond' %} {#pass#}
+    {%- elif value is string or value is number %}
+      {{- output_indented(col, (key + ' => "' + value|string + '"')) }}
+    {%- elif value is mapping %}
+      {{- output_indented(col, (key + ' => {')) }}
+      {%- set col = col + logstash.indent %}
+      {%- for attr_key, attr_value in value.iteritems() %}
+        {{- output_indented(col, (attr_key + ' => "' + attr_value + '"')) }}
+      {%- endfor %}
+      {%- set col = col - logstash.indent %}
+      {{- output_indented(col, '}') }}
+    {%- elif value is iterable %}
+      {{- output_indented(col, key + ' => [') }}
+      {%- set col = col + logstash.indent %}
+      {%- for item in value %}
+        {{- output_indented(col, '"' + item + '"') }}{%- if loop.last == false %},{%- endif -%}
+      {%- endfor %}
+      {%- set col = col - logstash.indent %}
+      {{- output_indented(col, ']') }}
+    {%- endif %}
+  {%- endfor %}
+  {%- set col = col - logstash.indent %}
+  {{- output_indented(col, '}') }}
+  {%- if plugin.cond is defined %}
+    {%- set col = col - logstash.indent %}
+    {{- output_indented(col, '}') }}
+  {%- endif %}
+  {%- endfor %}
+}
+{%- endmacro %}
