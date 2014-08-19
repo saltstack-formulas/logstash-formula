@@ -62,7 +62,7 @@ This formula sets up certain defaults in map.jinja, specifically:
 
 * Name of the logstash package is logstash
 * Name of the logstash service is logstash
-* The latest version of logstash available will be installed (pkg.latest 
+* The latest version of logstash available will be installed  
   and kept up to date, instead of a one-time install of the latest version
   (e.g. use states.pkg.latest instead of states.pkg.installed)
 * The configuration files will use an indentation of four spaces
