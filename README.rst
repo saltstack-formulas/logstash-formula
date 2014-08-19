@@ -48,10 +48,10 @@ and their configuration attributes,see <http://logstash.net/docs/1.4.2/>.
 
 Using Conditionals
 ------------------
-The only attributes that are unique for this formula is the "cond" attribute,
-which is used to set up conditionals.  For example you may want to filter
-a logstash entry only if it meets certain criteria, such as being of a 
-certain type.  This formula supports if/else if/else by embedding the 
+The only plugin attributes that are unique for this formula is the "cond" 
+attribute, which is used to set up conditionals.  For example you may want
+to filter a logstash entry only if it meets certain criteria, such as being of
+a certain type.  This formula supports if/else if/else by embedding the 
 conditional to be used in the "cond" attribute of the plugin.  For this reason,
 this formula does not support nested conditionals at this time.  See
 pillar.example for an example of the conditional functionality.
