@@ -20,7 +20,8 @@ Available states
 ------------
 
 Install the ``logstash`` package, set up input/filter/output configuration
-files, and enable the service.
+files, and enable the service.  Compatible only with Salt 2014.1.10+, due to
+requirement for "mapping" test in jinja 2.6.
 
 Usage
 =====
