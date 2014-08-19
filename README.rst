@@ -42,9 +42,8 @@ by three optional keys:
 
 Each list item for any of the three plugin types contains arbitrary
 attributes of type string, number, dictionary, or list which will 
-be rendered into Logstash's configuration syntax.  depending on the plugin's
-expectations.  For a list of plugins and their configuration attributes,
-see <http://logstash.net/docs/1.4.2/>.
+be rendered into Logstash's configuration syntax.  For a list of plugins
+and their configuration attributes,see <http://logstash.net/docs/1.4.2/>.
 
 Using Conditionals
 ------------------
