@@ -16,6 +16,10 @@ logstash-svc:
     - enable: true
     - require:
       - pkg: logstash-pkg
+    - watch:
+      - file: logstash-config-inputs
+      - file: logstash-config-filters
+      - file: logstash-config-outputs
 
 {%- if logstash.inputs is defined %}
 logstash-config-inputs:
@@ -26,8 +30,6 @@ logstash-config-inputs:
     - mode: 775
     - source: salt://logstash/files/01-inputs.conf
     - template: jinja
-    - watch_in:
-      - service: logstash-svc
     - require:
       - pkg: logstash-pkg
 {%- else %}
@@ -45,8 +47,6 @@ logstash-config-filters:
     - mode: 755
     - source: salt://logstash/files/02-filters.conf
     - template: jinja
-    - watch_in:
-      - service: logstash-svc
     - require:
       - pkg: logstash-pkg
 {%- else %}
@@ -64,8 +64,6 @@ logstash-config-outputs:
     - mode: 755
     - source: salt://logstash/files/03-outputs.conf
     - template: jinja
-    - watch_in:
-      - service: logstash-svc
     - require:
       - pkg: logstash-pkg
 {%- else %}
