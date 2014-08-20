@@ -27,7 +27,7 @@ logstash-config-inputs:
     - name: /etc/logstash/conf.d/01-inputs.conf
     - user: root
     - group: root
-    - mode: 775
+    - mode: 755
     - source: salt://logstash/files/01-inputs.conf
     - template: jinja
     - require:
