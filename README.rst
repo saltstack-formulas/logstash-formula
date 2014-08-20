@@ -10,6 +10,9 @@ pillar data.
     See the full `Salt Formulas installation and usage instructions
     <http://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html>`_.
 
+    Logstash requires Java, either the Oracle implementation or OpenJDK.  Since
+    that is outside the scope of this formula, you must ensure that Java is installed before applying this formula.
+
 Available states
 ================
 
