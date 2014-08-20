@@ -28,8 +28,76 @@ Usage
 
 See pillar.example for an example configuration.
 
-Basic Usage
------------
+Example
+=======
+The easiest way to understand the formula is to look at an example.  The following is example pillar data:
+
+::
+    
+    logstash:
+        inputs:
+            -   
+                plugin_name: file
+                path:
+                    - /var/log/syslog
+                    - /var/log/authlog
+                type: syslog
+        filters:
+            -
+                plugin_name: grok
+                match:
+                    message: '%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}'
+                add_field:
+                    received_at: '%{@timestamp}'
+                    received_from: '%{host}'
+        outputs:
+            -
+                plugin_name: lumberjack
+                hosts:
+                    - logs.example.com
+                port: 5000
+                ssl_certificate: /etc/ssl/certs/lumberjack.crt
+
+That would result in this logstash config (the three separate files it would create are concatenated here):
+
+::
+
+    input {
+        file { 
+            path => [
+                "/var/log/syslog",
+                "/var/log/auth.log"
+            ]
+            type => "syslog"
+        }
+    }
+    filter {
+        grok {  
+            match => {
+                message => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}"
+            }
+            add_field => {
+                received_at => "%{@timestamp}"
+                received_from => "%{host}"
+            }
+        }
+    }
+    output {
+        lumberjack { 
+            hosts => [
+                "logs.example.com"
+            ]
+            port => "5000"
+            ssl_certificate => "/etc/ssl/certs/lumberjack.crt"
+        }
+    }
+
+
+For a more complicated example, including conditionals, see pillar.example.
+
+
+Pillar Data Explained
+---------------------
 
 The pillar data is structured as a dictionary with key 'logstash', followed
 by three optional keys:
