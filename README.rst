@@ -140,5 +140,5 @@ pillar data, for example::
     logstash:
         pkg: logstash-altversion
         svc: logstash-alterversion
-        pkgstate: installed
+        pkgstate: installed # instead of latest
         indent: 2
