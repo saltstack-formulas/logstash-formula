@@ -17,6 +17,7 @@ logstash-svc:
     - require:
       - pkg: logstash-pkg
 
+{%- if logstash.inputs is defined %}
 logstash-config-inputs:
   file.managed:
     - name: /etc/logstash/conf.d/01-inputs.conf
@@ -29,7 +30,13 @@ logstash-config-inputs:
       - service: logstash-svc
     - require:
       - pkg: logstash-pkg
+{%- else %}
+logstash-config-inputs:
+  file.absent:
+    - name: /etc/logstash/conf.d/01-inputs.conf
+{%- endif %}
 
+{%- if logstash.filters is defined %}
 logstash-config-filters:
   file.managed:
     - name: /etc/logstash/conf.d/02-filters.conf
@@ -42,7 +49,13 @@ logstash-config-filters:
       - service: logstash-svc
     - require:
       - pkg: logstash-pkg
+{%- else %}
+logstash-config-filters:
+  file.absent:
+    - name: /etc/logstash/conf.d/02-filters.conf
+{%- endif %}
 
+{%- if logstash.outputs is defined %}
 logstash-config-outputs:
   file.managed:
     - name: /etc/logstash/conf.d/03-outputs.conf
@@ -55,3 +68,8 @@ logstash-config-outputs:
       - service: logstash-svc
     - require:
       - pkg: logstash-pkg
+{%- else %}
+logstash-config-outputs:
+  file.absent:
+    - name: /etc/logstash/conf.d/03-outputs.conf
+{%- endif %}
