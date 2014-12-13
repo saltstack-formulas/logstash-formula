@@ -10,9 +10,8 @@ logstash-pkg:
       - pkgrepo: logstash-repo
 
 logstash-svc:
-  service:
+  service.running:
     - name: {{logstash.svc}}
-    - running
     - enable: true
     - require:
       - pkg: logstash-pkg
