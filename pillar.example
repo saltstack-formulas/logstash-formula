@@ -37,3 +37,15 @@ logstash:
         - logs.example.com
       port: 5000
       ssl_certificate: /etc/ssl/certs/lumberjack.crt
+
+  # custom grok-pattern-files going to /etc/logstash/pattern
+  patterns:
+    # filename will be "syslog"
+    syslog:
+      # one entry per line in file
+      - 'SYSLOGBASE %{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:message}'
+    salt:
+      - 'SALTLOG_LEVEL (?:DEBUG|FATAL|ERROR|WARNING|INFO)'
+      - 'SALTCMD @?[a-z]\w+(?:\.@?[a-z]\w+)*'
+      - 'SALTLOGBASE %{TIMESTAMP_ISO8601:timestamp} \[%{SALTCMD:saltcmd}(?:([ \t]+)?)\]\[%{SALTLOG_LEVEL:priority}(?:[ \t]+)\] %{GREEDYDATA:message}'
+

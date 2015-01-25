@@ -1,0 +1,7 @@
+############################# 
+#      MANAGED BY SALT      #
+# !! DON'T EDIT MANUALLY !! #
+#############################
+{%- for pattern in (patterns|load_json) %}
+{{ pattern }}
+{%- endfor %}
