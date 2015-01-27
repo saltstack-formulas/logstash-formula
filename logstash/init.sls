@@ -20,6 +20,19 @@ logstash-svc:
       - file: logstash-config-filters
       - file: logstash-config-outputs
 
+# This gets around a user permissions bug with the logstash user/group
+# being able to read /var/log/syslog, even if the group is properly set for
+# the account. The group needs to be defined as 'adm' in the init script,
+# so we'll do a pattern replace.
+
+{%- if salt['grains.get']('os', None) == "Ubuntu" %}
+change service group in Ubuntu init script:
+  file.replace:
+    - name: /etc/init.d/logstash
+    - pattern: "LS_GROUP=logstash"
+    - repl: "LS_GROUP=adm"
+{%- endif %}
+
 {%- if logstash.inputs is defined %}
 logstash-config-inputs:
   file.managed:
