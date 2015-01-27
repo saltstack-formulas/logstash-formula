@@ -9,17 +9,6 @@ logstash-pkg:
     - require:
       - pkgrepo: logstash-repo
 
-logstash-svc:
-  service.running:
-    - name: {{logstash.svc}}
-    - enable: true
-    - require:
-      - pkg: logstash-pkg
-    - watch:
-      - file: logstash-config-inputs
-      - file: logstash-config-filters
-      - file: logstash-config-outputs
-
 # This gets around a user permissions bug with the logstash user/group
 # being able to read /var/log/syslog, even if the group is properly set for
 # the account. The group needs to be defined as 'adm' in the init script,
@@ -31,7 +20,20 @@ change service group in Ubuntu init script:
     - name: /etc/init.d/logstash
     - pattern: "LS_GROUP=logstash"
     - repl: "LS_GROUP=adm"
+    - watch_in:
+      - service: logstash-svc
 {%- endif %}
+
+logstash-svc:
+  service.running:
+    - name: {{logstash.svc}}
+    - enable: true
+    - require:
+      - pkg: logstash-pkg
+    - watch:
+      - file: logstash-config-inputs
+      - file: logstash-config-filters
+      - file: logstash-config-outputs
 
 {%- if logstash.inputs is defined %}
 logstash-config-inputs:
