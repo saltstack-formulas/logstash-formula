@@ -24,17 +24,6 @@ change service group in Ubuntu init script:
       - service: logstash-svc
 {%- endif %}
 
-logstash-svc:
-  service.running:
-    - name: {{logstash.svc}}
-    - enable: true
-    - require:
-      - pkg: logstash-pkg
-    - watch:
-      - file: logstash-config-inputs
-      - file: logstash-config-filters
-      - file: logstash-config-outputs
-
 {%- if logstash.inputs is defined %}
 logstash-config-inputs:
   file.managed:
@@ -85,3 +74,14 @@ logstash-config-outputs:
   file.absent:
     - name: /etc/logstash/conf.d/03-outputs.conf
 {%- endif %}
+
+logstash-svc:
+  service.running:
+    - name: {{logstash.svc}}
+    - enable: true
+    - require:
+      - pkg: logstash-pkg
+    - watch:
+      - file: logstash-config-inputs
+      - file: logstash-config-filters
+      - file: logstash-config-outputs
