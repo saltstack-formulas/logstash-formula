@@ -1,0 +1,4 @@
+{%- from 'logstash/map.jinja' import logstash, format_logstash_config with context -%}
+{%- for plugin_type, plugin_array in logstash.conf[conf_name].iteritems() -%}
+{{ format_logstash_config(plugin_type, plugin_array) }}
+{%- endfor -%}

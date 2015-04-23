@@ -3,13 +3,15 @@
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
-    'indent': 4
+    'indent': 4,
+    'conf_dir': '/etc/logstash/conf.d'
   },
   'RedHat': {
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
-    'indent': 4
+    'indent': 4,
+    'conf_dir': '/etc/logstash/conf.d'
   }
 }, merge=salt['pillar.get']('logstash')) %}
 
