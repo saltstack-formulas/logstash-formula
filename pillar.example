@@ -1,5 +1,6 @@
 ---
 logstash:
+  version: 2.0
   inputs:
     - 
       plugin_name: file
