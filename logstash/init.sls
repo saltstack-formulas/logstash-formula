@@ -94,7 +94,7 @@ logstash-config-outputs:
 {% if logstash.env is defined %}
 logstash-env:
   file.managed:
-    - name: /etc/default/logstash.conf
+    - name: /etc/default/logstash
     - mode: 664
     - user: root
     - group: root
@@ -103,7 +103,7 @@ logstash-env:
     - require:
       - pkg: logstash-pkg
     - defaults:
-      config: {{ logstash.env }}
+      config: {{ logstash.env | json }}
 {% endif %}
 
 logstash-svc:
