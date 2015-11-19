@@ -8,9 +8,10 @@
 
 include:
   - .repo
+  - .plugin
 
 logstash-pkg:
-  pkg.{{logstash.pkgstate}}:
+  pkg.{{ logstash.pkgstate }}:
     - name: {{logstash.pkg}}
     - version: {{ versionstring }}
     - require:
