@@ -7,7 +7,7 @@ logstash-repo-key:
 logstash-repo:
   pkgrepo.managed:
     - humanname: Logstash Debian Repository
-    - name: deb http://packages.elasticsearch.org/logstash/1.4/debian stable main
+    - name: deb http://packages.elasticsearch.org/logstash/2.0/debian stable main
     - require:
       - cmd: logstash-repo-key
 {%- elif grains['os_family'] == 'RedHat' %}
