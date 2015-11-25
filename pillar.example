@@ -1,6 +1,10 @@
 ---
 logstash:
-  version: 2.0
+  {% if salt['grains.get']('os_family', None) == "Debian" %}
+  version: "2.0"
+  {% else %}
+  version: "2.0.0"
+  {% endif %}
   env:
     KILL_ON_STOP_TIMEOUT: 0
     LS_HEAP_SIZE: {{ ((grains.mem_total|int) /10*5)| round | int }}m

@@ -1,6 +1,6 @@
 {%- from 'logstash/map.jinja' import logstash with context %}
 
-{% if logstash.version.startswith('2') %}
+{% if logstash.version.startswith('2') and salt['grains.get']('os_family', None) == "Debian" %}
 {% set versionstring="1:" + logstash.version %}
 {% else %}
 {% set versionstring = logstash.version %}
@@ -13,7 +13,7 @@ include:
 logstash-pkg:
   pkg.{{ logstash.pkgstate }}:
     - name: {{logstash.pkg}}
-    - version: {{ versionstring }}
+    - version: "{{ versionstring }}"
     - require:
       - pkgrepo: logstash-repo
 
