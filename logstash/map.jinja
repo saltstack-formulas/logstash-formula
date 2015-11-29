@@ -28,7 +28,7 @@
   {%- endif %}
   {{- output_indented(col, (plugin.plugin_name + " {")) }}
   {%- set col = col + logstash.indent %}
-  {%- for key, value in plugin.iteritems() %}
+  {%- for key, value in plugin.items() %}
     {%- if key == 'plugin_name' or key == 'cond' %} {#pass#}
     {%- elif value is sameas True or value is sameas False %}
       {{- output_indented(col, (key + ' => ' + value|string|lower)) }}
@@ -37,7 +37,7 @@
     {%- elif value is mapping %}
       {{- output_indented(col, (key + ' => {')) }}
       {%- set col = col + logstash.indent %}
-      {%- for attr_key, attr_value in value.iteritems() %}
+      {%- for attr_key, attr_value in value.items() %}
         {{- output_indented(col, (attr_key + ' => "' + attr_value + '"')) }}
       {%- endfor %}
       {%- set col = col - logstash.indent %}
