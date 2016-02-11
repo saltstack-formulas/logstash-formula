@@ -7,8 +7,8 @@
 {% endif %}
 
 include:
-  - .repo
-  - .plugin
+  - logstash.repo
+  - logstash.plugin
 
 logstash-pkg:
   pkg.{{ logstash.pkgstate }}:
