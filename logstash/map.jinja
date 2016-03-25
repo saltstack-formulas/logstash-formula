@@ -30,7 +30,7 @@
   {%- set col = col + logstash.indent %}
   {%- for key, value in plugin.items() %}
     {%- if key == 'plugin_name' or key == 'cond' %} {#pass#}
-    {%- elif value is sameas True or value is sameas False %}
+    {%- elif value == True or value == False %}
       {{- output_indented(col, (key + ' => ' + value|string|lower)) }}
     {%- elif value is string or value is number %}
       {{- output_indented(col, (key + ' => "' + value|string + '"')) }}
