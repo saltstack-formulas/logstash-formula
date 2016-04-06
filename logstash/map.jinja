@@ -1,17 +1,33 @@
-{% set logstash = salt['grains.filter_by']({
-  'Debian': {
-    'pkg': 'logstash',
-    'svc': 'logstash',
-    'pkgstate': 'latest',
-    'indent': 4
-  },
-  'RedHat': {
-    'pkg': 'logstash',
-    'svc': 'logstash',
-    'pkgstate': 'latest',
-    'indent': 4
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+
+{## Start with  defaults from defaults.yaml ##}
+{% import_yaml 'logstash/defaults.yaml' as default_settings %}
+
+{##
+Setup variable using grains['os_family'] based logic, only add key:values here
+that differ from whats in defaults.yaml
+##}
+{% set os_family_map = salt['grains.filter_by']({
+        'Debian': {},
+        'Suse': {},
+        'Arch': {},
+        'RedHat': {},
   }
-}, merge=salt['pillar.get']('logstash')) %}
+  , grain="os_family"
+  , merge=salt['pillar.get']('logstash:lookup'))
+%}
+{## Merge the flavor_map to the default settings ##}
+{% do default_settings.logstash.update(os_family_map) %}
+
+{## Merge in logstash:lookup pillar ##}
+{% set logstash = salt['pillar.get'](
+        'logstash',
+        default=default_settings.logstash,
+        merge=True
+    )
+%}
+
 
 {%- macro output_indented(col, string) %}
 {{ string|indent(col, true) -}}

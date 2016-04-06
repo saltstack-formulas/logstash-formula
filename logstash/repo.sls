@@ -1,15 +1,22 @@
-{%- if grains['os_family'] == 'Debian' %}
-logstash-repo-key:
-  cmd.run:
-    - name: wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
-    - unless: apt-key list | grep 'Elasticsearch (Elasticsearch Signing Key)'
+{%- from 'logstash/map.jinja' import logstash with context %}
 
-logstash-repo:
+{%- if grains['os_family'] == 'Debian' %}
+beats_repo_https_apt_support:
+  pkg.installed:
+    - name: apt-transport-https
+
+logstash_repo:
   pkgrepo.managed:
-    - humanname: Logstash Debian Repository
-    - name: deb http://packages.elasticsearch.org/logstash/2.0/debian stable main
+    - humanname: Logstash Repo
+    - name: deb https://packages.elastic.co/logstash/{{logstash.repoversion}}/debian stable main
+    - file: /etc/apt/sources.list.d/beats.list
+    - gpgcheck: 1
+    - key_url: https://packages.elastic.co/GPG-KEY-elasticsearch
     - require:
-      - cmd: logstash-repo-key
+      - pkg: apt-transport-https
+    - require_in:
+      - pkg: logstash
+
 {%- elif grains['os_family'] == 'RedHat' %}
 logstash-repo-key:
   cmd.run:
@@ -18,8 +25,8 @@ logstash-repo-key:
 
 logstash-repo:
   pkgrepo.managed:
-    - humanname: logstash repository for 1.4.x packages
-    - baseurl: http://packages.elasticsearch.org/logstash/1.4/centos
+    - humanname: logstash repository for {{logstash.repoversion}}.x packages
+    - baseurl: http://packages.elasticsearch.org/logstash/{{logstash.repoversion}}/centos
     - gpgcheck: 1
     - gpgkey: http://packages.elasticsearch.org/GPG-KEY-elasticsearch
     - enabled: 1
