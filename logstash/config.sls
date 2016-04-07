@@ -5,7 +5,7 @@
 # the account. The group needs to be defined as 'adm' in the init script,
 # so we'll do a pattern replace.
 
-{%- if salt['grains.get']('os', None) == "Ubuntu" %}
+{%- if salt['grains.get']('os_family', None) == "Debian" %}
 change service group in Ubuntu init script:
   file.replace:
     - name: /etc/init.d/logstash
@@ -27,7 +27,7 @@ add adm group to logstash service account:
 {%- if logstash.inputs is defined %}
 logstash-config-inputs:
   file.managed:
-    - name: /etc/logstash/conf.d/01-inputs.conf
+    - name: {{logstash.configdir}}conf.d/01-inputs.conf
     - user: root
     - group: root
     - mode: 755
@@ -38,13 +38,13 @@ logstash-config-inputs:
 {%- else %}
 logstash-config-inputs:
   file.absent:
-    - name: /etc/logstash/conf.d/01-inputs.conf
+    - name: {{logstash.configdir}}conf.d/01-inputs.conf
 {%- endif %}
 
 {%- if logstash.filters is defined %}
 logstash-config-filters:
   file.managed:
-    - name: /etc/logstash/conf.d/02-filters.conf
+    - name: {{logstash.configdir}}conf.d/02-filters.conf
     - user: root
     - group: root
     - mode: 755
@@ -55,13 +55,13 @@ logstash-config-filters:
 {%- else %}
 logstash-config-filters:
   file.absent:
-    - name: /etc/logstash/conf.d/02-filters.conf
+    - name: {{logstash.configdir}}conf.d/02-filters.conf
 {%- endif %}
 
 {%- if logstash.outputs is defined %}
 logstash-config-outputs:
   file.managed:
-    - name: /etc/logstash/conf.d/03-outputs.conf
+    - name: {{logstash.configdir}}conf.d/03-outputs.conf
     - user: root
     - group: root
     - mode: 755
@@ -72,5 +72,5 @@ logstash-config-outputs:
 {%- else %}
 logstash-config-outputs:
   file.absent:
-    - name: /etc/logstash/conf.d/03-outputs.conf
+    - name: {{logstash.configdir}}conf.d/03-outputs.conf
 {%- endif %}

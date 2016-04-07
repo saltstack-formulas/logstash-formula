@@ -7,5 +7,6 @@ logstash:
   indent: 4
   repoversion: "2.3"
   configfile: "/etc/logstash/logstash.conf"
+  configdir: "/etc/logstash/"
   service:
     name: logstash
