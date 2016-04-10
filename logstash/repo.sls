@@ -5,7 +5,7 @@ beats_repo_https_apt_support:
   pkg.installed:
     - name: apt-transport-https
 
-logstash_repo:
+logstash-repo:
   pkgrepo.managed:
     - humanname: Logstash Repo
     - name: deb https://packages.elastic.co/logstash/{{logstash.repoversion}}/debian stable main
