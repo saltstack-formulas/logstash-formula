@@ -2,6 +2,7 @@
 # vim: ft=yaml
 logstash:
   pkg: "logstash"
+  javapkg: default-jre-headless
   svc: "logstash"
   pkgstate: "latest"
   indent: 4
