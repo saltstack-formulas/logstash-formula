@@ -1,7 +1,7 @@
 {%- from 'logstash/map.jinja' import logstash with context %}
 
 {%- if grains['os_family'] == 'Debian' %}
-beats_repo_https_apt_support:
+logstash_repo_https_apt_support:
   pkg.installed:
     - name: apt-transport-https
 
