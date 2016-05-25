@@ -1,11 +1,13 @@
 {% set logstash = salt['grains.filter_by']({
   'Debian': {
+    'install_pkg_src': True,
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
     'indent': 4
   },
   'RedHat': {
+    'install_pkg_src': True,
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
