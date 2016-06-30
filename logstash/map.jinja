@@ -32,8 +32,10 @@
     {%- if key == 'plugin_name' or key == 'cond' %} {#pass#}
     {%- elif value is sameas True or value is sameas False %}
       {{- output_indented(col, (key + ' => ' + value|string|lower)) }}
-    {%- elif value is string or value is number %}
+    {%- elif value is string %}
       {{- output_indented(col, (key + ' => "' + value|string + '"')) }}
+    {%- elif value is number %}
+      {{- output_indented(col, (key + ' => ' + value|string)) }}
     {%- elif value is mapping %}
       {{- output_indented(col, (key + ' => {')) }}
       {%- set col = col + logstash.indent %}
