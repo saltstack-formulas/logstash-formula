@@ -1,13 +1,17 @@
 {%- from 'logstash/map.jinja' import logstash with context %}
 
+{%- if logstash.use_upstream_repo %}
 include:
   - .repo
+{%- endif %}
 
 logstash-pkg:
   pkg.{{logstash.pkgstate}}:
     - name: {{logstash.pkg}}
+    {%- if logstash.use_upstream_repo %}
     - require:
       - pkgrepo: logstash-repo
+    {%- endif %}
 
 # This gets around a user permissions bug with the logstash user/group
 # being able to read /var/log/syslog, even if the group is properly set for
