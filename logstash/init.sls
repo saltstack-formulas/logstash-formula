@@ -30,6 +30,7 @@ change service group in Ubuntu init script:
 add adm group to logstash service account:
   user.present:
     - name: logstash
+    - remove_groups: False
     - groups:
       - logstash
       - adm
