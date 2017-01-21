@@ -1,19 +1,57 @@
-{% set logstash = salt['grains.filter_by']({
+{#- TODO:
+      - Merge with `logstash:lookup`, not `logstash`.
+      - What's the JRE package name on RedHat?
+#}
+{%- set default_version = '5.x' %}
+{%- set logstash = salt['grains.filter_by']({
   'Debian': {
     'use_upstream_repo': True,
+    'upstream_repo_version': default_version,
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
-    'indent': 4
+    'indent': 4,
+    'jre_pkg': 'default-jre-headless',
+    'service_conf_file': '/etc/init.d/logstash'
   },
   'RedHat': {
     'use_upstream_repo': True,
+    'upstream_repo_version': default_version,
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
-    'indent': 4
+    'indent': 4,
+    'jre_pkg': 'default-jre-headless'
   }
 }, merge=salt['pillar.get']('logstash')) %}
+
+
+{#- if `upstream_repo` is already in th `logstash` dict, it was likely merged
+   from the pillar.  Only map if it is missing #}
+{%- if 'upstream_repo' not in logstash %}
+  {%- set upstream_repos = salt['grains.filter_by']({
+    'Debian': {
+      '5.x': 'deb https://artifacts.elastic.co/packages/5.x/apt stable main',
+      '2.4': 'deb https://packages.elastic.co/logstash/2.4/debian stable main',
+      '2.3': 'deb https://packages.elastic.co/logstash/2.3/debian stable main',
+      '1.5': 'deb http://packages.elasticsearch.org/logstash/1.5/debian stable main'
+    },
+    'RedHat': {
+      '5.x': 'https://artifacts.elastic.co/packages/5.x/yum',
+      '2.4': 'https://packages.elastic.co/logstash/2.4/centos',
+      '2.3': 'https://packages.elastic.co/logstash/2.3/centos',
+      '1.5': 'http://packages.elasticsearch.org/logstash/1.5/centos'
+    }
+  }) %}
+  {%- do logstash.update(upstream_repo=upstream_repos[logstash.upstream_repo_version]) %}
+{%- endif %}
+
+
+{%- if salt['grains.get']('os_family') == 'Debian'
+        and logstash.upstream_repo_version == '5.x' %}
+  {%- do logstash.update(service_conf_file='/etc/logstash/startup.options') %}
+{%- endif %}
+
 
 {%- macro output_indented(col, string) %}
 {{ string|indent(col, true) -}}
