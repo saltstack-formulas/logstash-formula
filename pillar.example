@@ -1,39 +1,54 @@
----
 logstash:
+  pkgstate: latest
+  indent: 2
   inputs:
-    - 
-      plugin_name: file
+    - plugin_name: file
       path:
         - /var/log/syslog
         - /var/log/auth.log
       type: syslog
   filters:
-    -
-      plugin_name: grok
-      cond: 'if [type] == "syslog"'
-      match:
-        message: '%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}'
-      add_field:
-        received_at: '%{@timestamp}'
-        received_from: '%{host}'
-    -
-      plugin_name: grok
-      cond: 'else if [type] == "nginx"'
-      match:
-        message: '%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{URIPATHPARAM:request}(?: HTTP/%{NUMBER:httpversion})?|-)\" %{NUMBER:response} (?:%{NUMBER:bytes}|-) \"(?:%{URI:referrer}|-)\" %{QS:agent}'
-      add_field:
-        received_at: '%{@timestamp}'
-        received_from: '%{host}'        
-    -
-      plugin_name: date
+    - plugin_name: conditional
+      if: 
+        cond: '[type] == "syslog"'
+        then:
+          - plugin_name: grok
+            match:
+              message: '%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}'
+            add_field:
+              received_at: '%{@timestamp}'
+              received_from: '%{host}'
+    - plugin_name: date
       match:
         - 'syslog_timestamp'
         - 'MMM  d HH:mm:ss'
         - 'MMM dd HH:mm:ss'
   outputs:
-    -
-      plugin_name: lumberjack
+    - plugin_name: lumberjack
       hosts:
         - logs.example.com
       port: 5000
       ssl_certificate: /etc/ssl/certs/lumberjack.crt
+    - plugin_name: conditional
+      if:
+        cond: '[type] == "syslog"'
+        then:
+          - plugin_name: conditional
+            if:
+              cond: '"CRITICAL" in [syslog_message]'
+              then:
+                - plugin_name: email
+                  to: 'critical@example.com'
+            elseif:
+              - cond: '"ERROR" in [syslog_message]'
+                then: 
+                  - plugin_name: email
+                    to: 'error@example.com'
+              - cond: '"WARN" in [syslog_message]'
+                then: 
+                  - plugin_name: email
+                    to: 'warning@example.com'
+            else:
+              then:
+                - plugin_name: email
+                  to: 'other@example.com'
