@@ -18,7 +18,7 @@ logstash-pkg:
 # the account. The group needs to be defined as 'adm' in the init script,
 # so we'll do a pattern replace.
 
-{%- if salt['grains.get']('os', None) == "Ubuntu" %}
+{%- if logstash.get('fix_permissions', True) and salt['grains.get']('os', None) == "Ubuntu" %}
 change service group in Ubuntu init script:
   file.replace:
     - name: /etc/init.d/logstash
