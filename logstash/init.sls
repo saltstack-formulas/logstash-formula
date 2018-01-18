@@ -66,10 +66,32 @@ logstash-config-filters:
     - template: jinja
     - require:
       - pkg: logstash-pkg
+
 {%- else %}
 logstash-config-filters:
   file.absent:
     - name: /etc/logstash/conf.d/02-filters.conf
+{%- endif %}
+
+{%- if logstash.patterns is defined %}
+{%- for name, patterns in logstash.patterns.items() %}
+logstash-pattern-{{name}}:
+  file.managed:
+    - name: /etc/logstash/patterns/{{name}}
+    - template: jinja
+    - source: salt://logstash/files/pattern.jinja2
+    - context:
+        patterns: '{{patterns|json}}'
+    - makedirs: True
+    - require:
+      - pkg: logstash-pkg
+    - watch_in:
+      - service: logstash-svc
+{%- endfor %}
+{%- else %}
+logstash-patterns:
+  file.absent:
+    - name: /etc/logstash/patterns
 {%- endif %}
 
 {%- if logstash.outputs is defined %}
