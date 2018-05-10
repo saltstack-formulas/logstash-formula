@@ -1,9 +1,9 @@
 {% set repo_state = 'absent' %}
-{% if salt['pillar.get']('logstash:use_upstream_repo', 'True') %}
+{% if salt['pillar.get']('logstash:repo:use_upstream_repo', 'True') %}
     {% set repo_state = 'managed' %}
 {% endif %}
-{%- set version = salt['pillar.get']('logstash:version', '5') %}
-{% set old_repo = salt['pillar.get']('logstash:old_repo', 'False') %}
+{%- set version = salt['pillar.get']('logstash:repo:version', '5') %}
+{% set old_repo = salt['pillar.get']('logstash:repo:old_repo', 'False') %}
 {% if salt['grains.get']('os_family') == 'Debian' %}
 
 {% if old_repo == True %}
@@ -16,7 +16,7 @@ logstash-repo-key:
 logstash-repo:
   pkgrepo.managed:
     - humanname: Logstash Debian Repository
-    - name: deb http://packages.elasticsearch.org/logstash/1.4/debian stable main
+    - name: deb http://packages.elasticsearch.org/logstash/{{ version }}/debian stable main
     - require:
       - cmd: logstash-repo-key
 {%- elif grains['os_family'] == 'RedHat' %}
@@ -27,8 +27,8 @@ logstash-repo-key:
 
 logstash-repo:
   pkgrepo.managed:
-    - humanname: logstash repository for 1.4.x packages
-    - baseurl: http://packages.elasticsearch.org/logstash/1.4/centos
+    - humanname: logstash repository for {{ version }}.x packages
+    - baseurl: http://packages.elasticsearch.org/logstash/{{ version }}/centos
     - gpgcheck: 1
     - gpgkey: http://packages.elasticsearch.org/GPG-KEY-elasticsearch
     - enabled: 1
