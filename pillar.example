@@ -1,8 +1,8 @@
 ---
 logstash:
+  use_upstream_repo: True
   repo:
       version: major or minor version number
-      use_upstream_repo: True
       old_repo: False
   inputs:
     -
