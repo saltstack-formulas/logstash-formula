@@ -22,7 +22,7 @@ logstash-pkg:
 # the account. The group needs to be defined as 'adm' in the init script,
 # so we'll do a pattern replace.
 
-{% if salt['grains.get']('init' != 'systemd')%}
+{% if salt['grains.get']('init' , None) != 'systemd'%}
 {%- if salt['grains.get']('os', None) == "Ubuntu" %}
 change service group in Ubuntu init script:
   file.replace:
