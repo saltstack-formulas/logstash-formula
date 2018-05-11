@@ -2,12 +2,11 @@
 {% if salt['pillar.get']('logstash:repo:use_upstream_repo', 'True') %}
     {% set repo_state = 'managed' %}
 {% endif %}
-{%- set version = salt['pillar.get']('logstash:repo:version', '5') %}
+{% set version = salt['pillar.get']('logstash:repo:version', '5') %}
 {% set old_repo = salt['pillar.get']('logstash:repo:old_repo', 'False') %}
-{% if salt['grains.get']('os_family') == 'Debian' %}
 
 {% if old_repo == True %}
-{%- if grains['os_family'] == 'Debian' %}
+{% if grains['os_family'] == 'Debian' %}
 logstash-repo-key:
   cmd.run:
     - name: wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
@@ -19,7 +18,7 @@ logstash-repo:
     - name: deb http://packages.elasticsearch.org/logstash/{{ version }}/debian stable main
     - require:
       - cmd: logstash-repo-key
-{%- elif grains['os_family'] == 'RedHat' %}
+{% elif grains['os_family'] == 'RedHat' %}
 logstash-repo-key:
   cmd.run:
     - name:  rpm --import http://packages.elasticsearch.org/GPG-KEY-elasticsearch
@@ -34,10 +33,10 @@ logstash-repo:
     - enabled: 1
     - require:
       - cmd: logstash-repo-key
-{%- endif %}
+{% endif %}
 
 {% elif old_repo == False %}
-{%- if grains['os_family'] == 'Debian' %}
+{% if grains['os_family'] == 'Debian' %}
 add_elastic_repository:
     pkg.installed:
         - name: apt-transport-https
