@@ -37,7 +37,7 @@ logstash-repo:
 
 {% elif old_repo == False %}
 {% if grains['os_family'] == 'Debian' %}
-add_elastic_repository:
+logstash-repo:
     pkg.installed:
         - name: apt-transport-https
 
@@ -50,7 +50,7 @@ add_elastic_repository:
             - pkg: apt-transport-https
 
 {% elif salt['grains.get']('os_family') == 'RedHat' %}
-add_elastic_repository:
+logstash-repo:
     pkgrepo.{{ repo_state }}:
         - name: elastic
         - humanname: "Elastic repository for " ~ {{ version }} ~ ".x packages"
