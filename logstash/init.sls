@@ -14,7 +14,7 @@ logstash-pkg:
       - pkg: {{ logstash.java }}
     {%- endif %}
 
-{{ logstash.java }}
+{{ logstash.java }}:
   pkg.installed
 
 # This gets around a user permissions bug with the logstash user/group
