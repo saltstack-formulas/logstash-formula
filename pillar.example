@@ -1,5 +1,6 @@
 ---
 logstash:
+  java: openjdk-8-jre-headless
   use_upstream_repo: True
   repo:
       version: major or minor version number
