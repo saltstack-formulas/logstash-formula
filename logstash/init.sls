@@ -21,7 +21,7 @@ logstash-pkg:
 # being able to read /var/log/syslog, even if the group is properly set for
 # the account. The group needs to be defined as 'adm' in the init script,
 # so we'll do a pattern replace.
-
+{% if salt['grains.get']('init' != 'systemd')%}
 {%- if salt['grains.get']('os', None) == "Ubuntu" %}
 change service group in Ubuntu init script:
   file.replace:
@@ -41,6 +41,7 @@ add adm group to logstash service account:
     - require:
       - pkg: logstash-pkg
 {%- endif %}
+{% endif %}
 
 {%- if logstash.inputs is defined %}
 logstash-config-inputs:
