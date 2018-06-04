@@ -4,14 +4,16 @@
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
-    'indent': 4
+    'indent': 4,
+    'java': 'openjdk-8-jre-headless',
   },
   'RedHat': {
     'use_upstream_repo': True,
     'pkg': 'logstash',
     'svc': 'logstash',
     'pkgstate': 'latest',
-    'indent': 4
+    'indent': 4,
+    'java': 'java-1.8.0-openjdk',
   }
 }, merge=salt['pillar.get']('logstash')) %}
 
