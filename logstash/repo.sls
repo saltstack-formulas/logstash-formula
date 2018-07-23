@@ -1,9 +1,9 @@
 {% set repo_state = 'absent' %}
-{% if salt['pillar.get']('logstash:use_upstream_repo', 'True') %}
+{% if salt['pillar.get']('logstash:use_upstream_repo', True) %}
     {% set repo_state = 'managed' %}
 {% endif %}
 {% set version = salt['pillar.get']('logstash:repo:version', '5') %}
-{% set old_repo = salt['pillar.get']('logstash:repo:old_repo', 'False') %}
+{% set old_repo = salt['pillar.get']('logstash:repo:old_repo', False) %}
 
 {% if old_repo == True %}
 {% if grains['os_family'] == 'Debian' %}
