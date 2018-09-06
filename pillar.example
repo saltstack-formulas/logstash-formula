@@ -34,7 +34,28 @@ logstash:
       match:
         - 'syslog_timestamp'
         - 'MMM  d HH:mm:ss'
-        - 'MMM dd HH:mm:ss'
+        - 'MMM dd HH:mm:ss'        
+    -
+      plugin_name: mutate
+      cond: 'if [type] == "syslog"'
+      gsub:
+        - "message"
+        #extra escape charactor required to write from pillar to logstash config
+        - "\\/"
+        - "_"    
+    -
+      plugin_name: mutate
+      cond: 'if [type] == "syslog"'
+      remove_field:
+        - starting
+        - ending
+    -
+      plugin_name: mutate
+      cond: 'if [type] == "syslog" and "apache" in [source]'
+      add_field:
+        user: "%{auth}"
+      remove_field: ["auth"]
+      
   outputs:
     -
       plugin_name: lumberjack
