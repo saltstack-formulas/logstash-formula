@@ -53,7 +53,7 @@ logstash-repo:
 logstash-repo:
     pkgrepo.{{ repo_state }}:
         - name: elastic
-        - humanname: "Elastic repository for " ~ {{ version }} ~ ".x packages"
+        - humanname: Elastic repository for {{ version }}.x packages
         - baseurl: https://artifacts.elastic.co/packages/{{ version }}.x/yum
         - gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
         - gpgcheck: 1
