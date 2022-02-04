@@ -84,6 +84,15 @@ That would result in this logstash config (the three separate files it would cre
                 received_from => "%{host}"
             }
         }
+        if [log][file][path] and ([log][file][path] == "/var/log/nginx/admin_access.log" {
+            mutate {
+                add_field => {
+                    "[@metadata][target_pipeline]" => "nginx.pipeline"
+                    "[@metadata][target_index]" => "access-nginx"
+                }
+            }
+        }
+  }
     }
     output {
         lumberjack { 
@@ -92,6 +101,15 @@ That would result in this logstash config (the three separate files it would cre
             ]
             port => "5000"
             ssl_certificate => "/etc/ssl/certs/lumberjack.crt"
+        }
+        if [@metadata][target_pipeline] and [@metadata][target_index] {
+            elasticsearch {
+                pipeline => "%{[@metadata][target_pipeline]}"
+                hosts => "elasticsearch.example.com"
+                index => "%{[@metadata][target_index]}-%{+YYYY.MM.dd}"
+                ssl => true
+                ssl_certificate_verification => true
+            }
         }
     }
 

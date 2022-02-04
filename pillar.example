@@ -21,6 +21,17 @@ logstash:
       add_field:
         received_at: '%{@timestamp}'
         received_from: '%{host}'
+
+    -
+      plugin_name: 'mutate'
+      cond: 'if [log][file][path] == "/var/log/nginx/admin_access.log"'
+      add_field: 
+        '"[@metadata][target_pipeline]"': 
+        # double quotes required to address adding fields that reference data from other fields. One use case is the use of metadata fields, which is shown below
+         "nginx.pipeline"
+        '"[@metadata][target_index]"': 
+         "acess-nginx"
+
     -
       plugin_name: grok
       cond: 'else if [type] == "nginx"'
@@ -63,3 +74,15 @@ logstash:
         - logs.example.com
       port: 5000
       ssl_certificate: /etc/ssl/certs/lumberjack.crt
+    
+    - 
+      plugin_name: elasticsearch
+      cond: 'if [@metadata][target_pipeline] and [@metadata][target_index]'
+      pipeline: "%{[@metadata][target_pipeline]}"
+      hosts: 
+        - elasticsearch.example.com
+      user: 
+      password: 
+      index: "%{[@metadata][target_index]}-%{+YYYY.MM.dd}"
+      ssl: true
+      ssl_certificate_verification: true
